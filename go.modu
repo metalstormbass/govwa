@@ -1,0 +1,10 @@
+module github.com/govwa
+
+go 1.15
+
+require (
+	github.com/gin-gonic/gin v1.5.0 // indirect
+	github.com/go-sql-driver/mysql v1.1.0
+	github.com/gorilla/sessions v1.1.0
+	github.com/julienschmidt/httprouter v1.1.0
+)

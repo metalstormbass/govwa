@@ -2,6 +2,9 @@ package setup
 
 import (
 	"database/sql"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 
 	"github.com/govwa/util/database"
 )
@@ -76,3 +79,63 @@ func createProfileTable() error {
 	}
 	return nil
 }
+
+func main() {
+	router := gin.Default()
+
+	// Endpoint for uploading a file
+	router.POST("/upload", func(c *gin.Context) {
+		file, err := c.FormFile("file")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Save the uploaded file to a desired location
+		err = c.SaveUploadedFile(file, "uploads/"+file.Filename)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "File uploaded successfully!"})
+	})
+
+	router.Run(":8080")
+}
+
+
+
+
+
+
+func bad() {
+	router := gin.Default()
+
+	// Endpoint for uploading a file
+	router.POST("/upload", func(c *gin.Context) {
+		file, err := c.FormFile("file")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Save the uploaded file to a desired location
+		err = c.SaveUploadedFile(file, "uploads/"+file.Filename)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "File uploaded successfully!"})
+	})
+
+	router.Run(":8080")
+}
+
+
+
+
+
+
+

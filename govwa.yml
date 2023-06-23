@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: govwadeployment
+  labels:
+    app: govwa-app
+    tier: frontend
+spec: 
+  selector: 
+    matchLabels:
+      app: govwa-app
+      tier: frontend
+  replicas: 3 
+  template:
+    metadata:
+      labels: 
+        app: govwa-app
+        tier: frontend
+    spec:
+      containers:
+      - image: michaelbraunbass/govwa:latest
+        imagePullPolicy: Always
+        name: govwa-container
+        ports:
+        - containerPort: 3001
+          name: govwa-port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: govwa-service
+  labels:
+    app: govwa-app
+spec: 
+  ports:
+   - port: 1338
+     targetPort: 3001
+  selector:
+    app: govwa-app
+    tier: frontend
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: govwa-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: govwa-example
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: govwa-service
+            port:
+              number: 1338
