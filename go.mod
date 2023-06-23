@@ -7,7 +7,7 @@ require (
 	github.com/go-sql-driver/mysql v1.0.0
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/gorilla/sessions v1.1.3
-	github.com/julienschmidt/httprouter v1.0.0
+	github.com/julienschmidt/httprouter v1.3.0
 	github.com/manucorporat/sse v0.0.0-20160126180136-ee05b128a739 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	golang.org/x/net v0.11.0 // indirect

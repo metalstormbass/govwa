@@ -2,7 +2,12 @@ package setup
 
 import (
 	"database/sql"
+	"fmt"
+	"io"
+	"log"
+	"mime/multipart"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 
@@ -85,14 +90,14 @@ func main() {
 
 	// Endpoint for uploading a file
 	router.POST("/upload", func(c *gin.Context) {
-		file, err := c.FormFile("file")
+		//file, err := c.FormFile("file")
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
 		// Save the uploaded file to a desired location
-		err = c.SaveUploadedFile(file, "uploads/"+file.Filename)
+		//err = c.SaveUploadedFile(file, "uploads/"+file.Filename)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -110,28 +115,54 @@ func main() {
 
 
 func bad() {
-	router := gin.Default()
-
-	// Endpoint for uploading a file
-	router.POST("/upload", func(c *gin.Context) {
-		file, err := c.FormFile("file")
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		// Save the uploaded file to a desired location
-		err = c.SaveUploadedFile(file, "uploads/"+file.Filename)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{"message": "File uploaded successfully!"})
-	})
-
-	router.Run(":8080")
+	r := gin.Default()
+	r.POST("/upload", handleUpload)
+	r.Run(":8080")
 }
+
+func handleUpload(c *gin.Context) {
+	// Dummy file
+	file := &multipart.FileHeader{
+		Filename: "example.txt",
+		Size:     1024,
+		//Header:   make(http.Header),
+	}
+
+	err := saveFile(file)
+	if err != nil {
+		log.Println("Error saving file: ", err)
+		c.String(http.StatusInternalServerError, "Internal server error")
+		return
+	}
+
+	c.String(http.StatusOK, "File uploaded successfully")
+}
+
+func saveFile(file *multipart.FileHeader) error {
+	// Dummy source file
+	src, err := os.Open("path/to/source/file.txt")
+	if err != nil {
+		return fmt.Errorf("error opening file: %w", err)
+	}
+	defer src.Close()
+
+	// Dummy destination file
+	dst, err := os.Create("path/to/destination/file.txt")
+	if err != nil {
+		return fmt.Errorf("error creating destination file: %w", err)
+	}
+	defer dst.Close()
+
+	_, err = io.Copy(dst, src)
+	if err != nil {
+		return fmt.Errorf("error copying file: %w", err)
+	}
+
+	return nil
+}
+
+
+
 
 
 
